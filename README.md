@@ -21,3 +21,19 @@ This repository contains a basic x86 kernel in C using Multiboot.
 > VBE Graphics memory address: `multiboot->framebuffer_addr` \
 > Video width `multiboot->framebuffer_width` \
 > Video height `multiboot->framebuffer_height`
+
+# About GRUB Bootloader
+
+1. create file `iso/boot/grub/grub.cfg`
+
+``` cfg
+set timeout=60
+set default=0
+
+menuentry "ExampleOS" {
+    multiboot /kernel.elf
+    boot
+}
+```
+2. You'll need to comment out the "Limine Build ISO" section in xmake.lua
+3. and uncomment the "GRUB Build ISO" section in xmake.lua
