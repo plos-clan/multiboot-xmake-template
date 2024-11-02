@@ -4,27 +4,33 @@ This repository contains a basic x86 kernel in C using Multiboot.
 
 ## Dependencies
 
-* `xmake` `xorriso` `mtools` `zig` `nasm`
+* `xmake` `xorriso` `nasm`
 
-> Use GRUB Bootloader, you need install `grub-pc-bin`
+> If you choose to use the GRUB bootloader, you will need to install `grub-pc-bin`
 
-# Struct
+## Xmake targets
+
+Running `xmake` will build the kernel and create a bootable ISO image.
+
+Running `xmake run` will build above automatically and run it in QEMU.
+
+## Directory structure
 
 * `src` Your kernel source code directory.
-* `iso` ISO image directory.
+* `include` Your kernel header files directory.
+* `assets` Will be used as the root directory of the ISO image. Put your assets here.
 
-# How to enable vbe video model
+## How to enable vbe video mode
 
-1. delete `src/boot/boot.asm`
-2. rename `src/boot/boot_vbe.asm.disable` to `src/boot/boot.asm`
+Open `src/boot/boot.asm`, comment out `Text Mode` section and uncomment `VBE Video Mode` section.
 
 > VBE Graphics memory address: `multiboot->framebuffer_addr` \
 > Video width `multiboot->framebuffer_width` \
 > Video height `multiboot->framebuffer_height`
 
-# About GRUB Bootloader
+## About GRUB Bootloader
 
-1. create file `iso/boot/grub/grub.cfg`
+1. Create file `iso/boot/grub/grub.cfg`
 
 ``` cfg
 set timeout=60
@@ -35,5 +41,6 @@ menuentry "ExampleOS" {
     boot
 }
 ```
-2. You'll need to comment out the "Limine Build ISO" section in xmake.lua
-3. and uncomment the "GRUB Build ISO" section in xmake.lua
+
+2. You'll need to comment out the "Limine Build ISO" section in `xmake.lua`
+3. and uncomment the "GRUB Build ISO" section in `xmake.lua`
