@@ -1,11 +1,11 @@
 /*
-* OSDEV.org vga terminal
-*/
-#include <stdint.h>
-#include <stddef.h>
+ * OSDEV.org vga terminal
+ */
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-void vga_move_cursor(uint16_t x,uint16_t y);
+void vga_move_cursor(uint16_t x, uint16_t y);
 
 static inline void outb(uint16_t port, uint8_t data) {
     __asm__ volatile("outb %b0, %w1" : : "a"(data), "Nd"(port));
@@ -13,8 +13,7 @@ static inline void outb(uint16_t port, uint8_t data) {
 
 static inline size_t strlen(const char *str) {
     size_t len = 0;
-    while (str[len])
-        len++;
+    while (str[len]) len++;
     return len;
 }
 
@@ -28,7 +27,7 @@ uint16_t *terminal_buffer;
 
 int status = 0;
 
-uint16_t cursor_x = 0, cursor_y = 0; // 光标位置
+uint16_t cursor_x = 0, cursor_y = 0;
 
 enum vga_color {
     VGA_COLOR_BLACK = 0,
@@ -54,17 +53,19 @@ uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
 }
 
 uint16_t vga_entry(unsigned char uc, uint8_t color) {
-    return (uint16_t) uc | (uint16_t) color << 8;
+    return (uint16_t)uc | (uint16_t)color << 8;
 }
 
-static void scroll() {
+static void vga_scroll() {
     uint8_t attributeByte = (0 << 4) | (15 & 0x0F);
     uint16_t blank = 0x20 | (attributeByte << 8);
 
     if (cursor_y >= 25) {
         int i;
-        for (i = 0 * 80; i < 24 * 80; i++) terminal_buffer[i] = terminal_buffer[i + 80];
-        for (i = 24 * 80; i < 25 * 80; i++) terminal_buffer[i] = blank;
+        for (i = 0 * 80; i < 24 * 80; i++)
+            terminal_buffer[i] = terminal_buffer[i + 80];
+        for (i = 24 * 80; i < 25 * 80; i++)
+            terminal_buffer[i] = blank;
         cursor_y = 24;
     }
 }
@@ -74,9 +75,9 @@ void vga_install(void) {
     terminal_row = 0;
     terminal_column = 0;
     terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-    terminal_buffer = (uint16_t *) 0xB8000;
-    for (size_t y = 0; y < VGA_HEIGHT ; y++) {
-        for (size_t x = 0; x < VGA_WIDTH ; x++) {
+    terminal_buffer = (uint16_t *)0xB8000;
+    for (size_t y = 0; y < VGA_HEIGHT; y++) {
+        for (size_t x = 0; x < VGA_WIDTH; x++) {
             const size_t index = y * VGA_WIDTH + x;
             terminal_buffer[index] = vga_entry(' ', terminal_color);
         }
@@ -92,10 +93,10 @@ void vga_clear() {
     }
     cursor_x = 0;
     cursor_y = 0;
-    vga_move_cursor(cursor_x,cursor_y);
+    vga_move_cursor(cursor_x, cursor_y);
 }
 
-void vga_move_cursor(uint16_t x,uint16_t y) {
+void vga_move_cursor(uint16_t x, uint16_t y) {
     uint16_t cursorLocation = y * 80 + x;
     outb(0x3D4, 14);
     outb(0x3D5, cursorLocation >> 8);
@@ -103,9 +104,7 @@ void vga_move_cursor(uint16_t x,uint16_t y) {
     outb(0x3D5, cursorLocation);
 }
 
-void vga_setcolor(uint8_t color) {
-    terminal_color = color;
-}
+void vga_setcolor(uint8_t color) { terminal_color = color; }
 
 void vga_putentryat(char c, uint8_t color, size_t x, size_t y) {
     const size_t index = y * VGA_WIDTH + x;
@@ -113,7 +112,7 @@ void vga_putentryat(char c, uint8_t color, size_t x, size_t y) {
 }
 
 void vga_putchar(char c) {
-    uint8_t attributeByte = terminal_color; // 黑底白字
+    uint8_t attributeByte = terminal_color;
     uint16_t attribute = attributeByte << 8;
     uint16_t *location;
 
@@ -128,8 +127,8 @@ void vga_putchar(char c) {
     } else if (c == '\r') {
         cursor_x = 0;
     } else if (c == '\n') {
-        cursor_x = 0; // 光标回首
-        cursor_y++; // 下一行
+        cursor_x = 0;
+        cursor_y++;
     } else if (c >= ' ' && c <= '~') {
         location = terminal_buffer + (cursor_y * 80 + cursor_x);
         *location = c | attribute;
@@ -141,8 +140,8 @@ void vga_putchar(char c) {
         cursor_y++;
     }
 
-    scroll();
-    vga_move_cursor(cursor_x,cursor_y);
+    vga_scroll();
+    vga_move_cursor(cursor_x, cursor_y);
 }
 
 void vga_write_dec(uint32_t dec) {
@@ -156,6 +155,4 @@ void vga_write(const char *data, size_t size) {
         vga_putchar(data[i]);
 }
 
-void vga_writestring(const char *data) {
-    vga_write(data, strlen(data));
-}
+void vga_writestring(const char *data) { vga_write(data, strlen(data)); }

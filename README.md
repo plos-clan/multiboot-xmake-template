@@ -32,7 +32,7 @@ Open `src/boot/boot.asm`, comment out `Text Mode` section and uncomment `VBE Vid
 
 1. Create file `iso/boot/grub/grub.cfg`
 
-``` cfg
+```c
 set timeout=60
 set default=0
 
