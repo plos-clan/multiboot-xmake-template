@@ -2,6 +2,13 @@
 
 This repository contains a basic x86 kernel in C using Multiboot.
 
+## About
+
+The template source code is borrowed from "CP_Kernel".
+Tested by x86 physical machine platform, there are no obvious bugs.
+
+[**ProjectStruct**](docs/ProjectStruct.md) has some project struct info.
+
 ## Dependencies
 
 * `xmake` `xorriso` `nasm`
@@ -13,12 +20,6 @@ This repository contains a basic x86 kernel in C using Multiboot.
 Running `xmake` will build the kernel and create a bootable ISO image.
 
 Running `xmake run` will build above automatically and run it in QEMU.
-
-## Directory structure
-
-* `src` Your kernel source code directory.
-* `include` Your kernel header files directory.
-* `assets` Will be used as the root directory of the ISO image. Put your assets here.
 
 ## How to enable vbe video mode
 
