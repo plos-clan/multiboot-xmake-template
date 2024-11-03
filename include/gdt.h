@@ -1,18 +1,16 @@
 #pragma once
 
-#include "ctypes.h"
+#include "klibc.h"
 
 #define GDT_LENGTH 6
-
 #define SA_RPL3 3
-
 #define SA_RPL_MASK 0xFFFC
 #define SA_TI_MASK 0xFFFB
 #define GET_SEL(cs, rpl) ((cs & SA_RPL_MASK & SA_TI_MASK) | (rpl))
 
 typedef struct gdt_entry_t {
-    uint16_t limit_low;           // 段基址 | 低16位置
-    uint16_t base_low;            // 段基址 | 高16位置
+    uint16_t limit_low;
+    uint16_t base_low;
     uint8_t base_middle;
     uint8_t access;
     uint8_t granularity;
@@ -55,7 +53,7 @@ typedef struct tss_table {
 } tss_entry;
 
 void set_kernel_stack(uintptr_t stack);
-void gdt_flush(uint32_t gdtr); // asmfunc.asm
-void tss_flush();              // asmfunc.asm
+void gdt_flush(uint32_t gdtr);
+void tss_flush();
 void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
 void gdt_install();

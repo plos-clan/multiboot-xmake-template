@@ -1,10 +1,37 @@
-#include "description_table.h"
-#include "krlibc.h"
+
+#include "gdt.h"
 
 gdt_entry_t gdt_entries[GDT_LENGTH];
 gdt_ptr_t gdt_ptr;
 
 tss_entry tss;
+
+void gdt_flush(uint32_t gdtr) {
+    __asm__ __volatile__ (
+        "lgdt (%0)\n"
+        "mov $0x10, %%ax\n"
+        "mov %%ax, %%ds\n"
+        "mov %%ax, %%es\n"
+        "mov %%ax, %%fs\n"
+        "mov %%ax, %%gs\n"
+        "mov %%ax, %%ss\n"
+        "ljmp $0x08, $1f\n"
+        "1:\n"
+        :
+        : "r" (gdtr)
+        : "eax"
+    );
+}
+
+void tss_flush() {
+    __asm__ __volatile__ (
+        "mov $0x2B, %%ax\n"
+        "ltr %%ax\n"
+        :
+        :
+        : "ax"
+    );
+}
 
 void write_tss(int32_t num, uint16_t ss0, uint32_t esp0) {
     uintptr_t base = (uintptr_t)&tss;

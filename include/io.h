@@ -1,65 +1,60 @@
 #pragma once
 
-#include "ctypes.h"
-
-void gdt_flush(uint32_t gdtr);
+#include "klibc.h"
 
 void io_hlt(void);
-
 void io_cli(void);
-
 void io_sti(void);
-
 void io_stihlt(void);
+uint8_t io_in8(uint16_t port);
+uint16_t io_in16(uint16_t port);
+uint32_t io_in32(uint16_t port);
+void io_out8(uint16_t port, uint8_t value);
+void io_out16(uint16_t port, uint16_t value);
+void io_out32(uint16_t port, uint32_t value);
 
-int io_in8(int port);
-
-int io_in16(int port);
-
-int io_in32(int port);
-
-void io_out8(int port, int data);
-
-void io_out16(int port, int data);
-
-void io_out32(int port, int data);
-
-int io_load_eflags(void);
-
-void io_store_eflags(int eflags);
-
-void load_gdtr(int limit, int addr);
-
-void load_idtr(int limit, int addr);
-
-uint16_t inw(uint16_t port);
-
-extern char read_port(unsigned short port);
-
-static inline uint32_t get_cr0(void) {
-    uint32_t cr0;
-    __asm__ volatile("mov %%cr0, %0" : "=r"(cr0));
-    return cr0;
+void io_hlt(void) {
+    __asm__ __volatile__("hlt");
 }
 
-static inline void set_cr0(uint32_t cr0) {
-    __asm__ volatile("mov %0, %%cr0" : : "r"(cr0));
+void io_cli(void) {
+    __asm__ __volatile__("cli");
 }
 
-static inline void outb(uint16_t port, uint8_t data) {
-    __asm__ volatile("outb %b0, %w1" : : "a"(data), "Nd"(port));
+void io_sti(void) {
+    __asm__ __volatile__("sti");
 }
 
-static inline void outsw(uint16_t port, const void *addr, uint32_t word_cnt) {
-    __asm__ volatile("cld; rep outsw" : "+S"(addr), "+c"(word_cnt) : "d"(port));
+void io_stihlt(void) {
+    __asm__ __volatile__("sti; hlt");
 }
 
-static inline uint8_t inb(uint16_t port) {
-    uint8_t data;
-    __asm__ volatile("inb %w1, %b0" : "=a"(data) : "Nd"(port));
-    return data;
+uint8_t io_in8(uint16_t port) {
+    uint8_t result;
+    __asm__ __volatile__("inb %1, %0" : "=a"(result) : "Nd"(port));
+    return result;
 }
 
-static inline void insw(uint16_t port, void *addr, uint32_t word_cnt) {
-    __asm__ volatile("cld; rep insw" : "+D"(addr), "+c"(word_cnt) : "d"(port) : "memory");
+uint16_t io_in16(uint16_t port) {
+    uint16_t result;
+    __asm__ __volatile__("inw %1, %0" : "=a"(result) : "Nd"(port));
+    return result;
+}
+
+uint32_t io_in32(uint16_t port) {
+    uint32_t result;
+    __asm__ __volatile__("inl %1, %0" : "=a"(result) : "Nd"(port));
+    return result;
+}
+
+void io_out8(uint16_t port, uint8_t value) {
+    __asm__ __volatile__("outb %0, %1" : : "a"(value), "Nd"(port));
+}
+
+void io_out16(uint16_t port, uint16_t value) {
+    __asm__ __volatile__("outw %0, %1" : : "a"(value), "Nd"(port));
+}
+
+void io_out32(uint16_t port, uint32_t value) {
+    __asm__ __volatile__("outl %0, %1" : : "a"(value), "Nd"(port));
 }

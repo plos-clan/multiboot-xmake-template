@@ -11,7 +11,7 @@ Tested by x86 physical machine platform, there are no obvious bugs.
 
 ## Dependencies
 
-* `xmake` `xorriso` `nasm`
+* `xmake` `xorriso`
 
 > If you choose to use the GRUB bootloader, you will need to install `grub-pc-bin`
 

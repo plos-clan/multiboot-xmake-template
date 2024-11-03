@@ -1,7 +1,7 @@
 set_project("ExampleOS")
 
 add_rules("mode.debug", "mode.release")
-add_requires("zig", "nasm")
+add_requires("zig")
 
 set_arch("i386")
 set_optimize("fastest")
@@ -11,19 +11,20 @@ set_policy("run.autobuild", true)
 target("kernel")
     set_kind("binary")
     set_languages("c23")
-    set_toolchains("@zig", "nasm")
+    set_toolchains("@zig")
+    set_toolset("as", "zig cc")
     set_default(false)
 
     add_includedirs("include")
-    add_files("src/**.asm", "src/**.c")
+    add_files("src/**.s", "src/**.c")
 
-    add_asflags("-f", "elf32", {force = true})
+    add_asflags("-Wno-unused-command-line-argument", {force = true})
 
     -- Fix xmake arch setting for Zig, see issue #5763
     add_cflags("-target x86-freestanding", {force = true})
     add_ldflags("-target x86-freestanding", {force = true})
 
-    add_ldflags("-flto", "-T", "linker.ld", {force = true})
+    add_ldflags("-T", "linker.ld", {force = true})
     add_cflags("-flto", "-m32", {force = true})
     add_cflags("-mno-80387", "-mno-mmx", "-mno-sse", "-mno-sse2", {force = true})
 

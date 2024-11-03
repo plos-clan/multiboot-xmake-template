@@ -1,15 +1,13 @@
+OUTPUT_FORMAT(elf32-i386)
+
 ENTRY(_start)
 
 SECTIONS
 {
-
 	. = 2M;
 
-	.multiboot : {
-		*(.multiboot)
-	}
-
 	.text : {
+  		KEEP(*(.multiboot))
 		*(.text)
 	}
 

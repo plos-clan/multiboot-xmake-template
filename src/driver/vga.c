@@ -1,21 +1,5 @@
-/*
- * OSDEV.org vga terminal
- */
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-void vga_move_cursor(uint16_t x, uint16_t y);
-
-static inline void outb(uint16_t port, uint8_t data) {
-    __asm__ volatile("outb %b0, %w1" : : "a"(data), "Nd"(port));
-}
-
-static inline size_t strlen(const char *str) {
-    size_t len = 0;
-    while (str[len]) len++;
-    return len;
-}
+#include "io.h"
+#include "klibc.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -84,6 +68,14 @@ void vga_install(void) {
     }
 }
 
+void vga_move_cursor(uint16_t x, uint16_t y) {
+    uint16_t cursorLocation = y * 80 + x;
+    io_out8(0x3D4, 14);
+    io_out8(0x3D5, cursorLocation >> 8);
+    io_out8(0x3D4, 15);
+    io_out8(0x3D5, cursorLocation);
+}
+
 void vga_clear() {
     for (size_t y = 0; y < VGA_HEIGHT; y++) {
         for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -94,14 +86,6 @@ void vga_clear() {
     cursor_x = 0;
     cursor_y = 0;
     vga_move_cursor(cursor_x, cursor_y);
-}
-
-void vga_move_cursor(uint16_t x, uint16_t y) {
-    uint16_t cursorLocation = y * 80 + x;
-    outb(0x3D4, 14);
-    outb(0x3D5, cursorLocation >> 8);
-    outb(0x3D4, 15);
-    outb(0x3D5, cursorLocation);
 }
 
 void vga_setcolor(uint8_t color) { terminal_color = color; }
@@ -146,7 +130,8 @@ void vga_putchar(char c) {
 
 void vga_write_dec(uint32_t dec) {
     int upper = dec / 10, rest = dec % 10;
-    if (upper) vga_write_dec(upper);
+    if (upper)
+        vga_write_dec(upper);
     vga_putchar(rest + '0');
 }
 
