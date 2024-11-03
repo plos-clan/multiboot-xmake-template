@@ -13,6 +13,8 @@ Tested by x86 physical machine platform, there are no obvious bugs.
 
 * `xmake` `xorriso`
 
+> When first running `xmake`, it will download zig as cross-compiler.
+
 > If you choose to use the GRUB bootloader, you will need to install `grub-pc-bin`
 
 ## Xmake targets
@@ -31,7 +33,7 @@ Open `src/boot/boot.asm`, comment out `Text Mode` section and uncomment `VBE Vid
 
 ## About GRUB Bootloader
 
-1. Create file `iso/boot/grub/grub.cfg`
+1. Create file `assets/boot/grub/grub.cfg`
 
 ```c
 set timeout=60
