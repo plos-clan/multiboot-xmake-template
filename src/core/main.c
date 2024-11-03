@@ -1,13 +1,15 @@
 #include "multiboot.h"
 #include "ctypes.h"
+#include "description_table.h"
+#include "kprintf.h"
 
-extern void vga_writestring(const char *data);
 extern void vga_install(void);
 
 _Noreturn void kernel_main(multiboot_t *multiboot){
     vga_install();
 
-    vga_writestring("Hello! ExampleOS!\n");
+    gdt_install();
+    printk("Hello! %s!\n","ExampleOS");
 
     while(1) __asm__("hlt");
 }
