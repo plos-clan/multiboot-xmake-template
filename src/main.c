@@ -4,6 +4,7 @@
 #include "vga.h"
 
 void kernel_main(multiboot_t *multiboot) {
+    (void)multiboot;
     vga_install();
     gdt_install();
 

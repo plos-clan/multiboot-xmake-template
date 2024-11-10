@@ -8,23 +8,19 @@
 #define SMALL 32
 #define SPECIAL 64
 
-#define __do_div(n, base)                                                      \
-    ({                                                                         \
-        int __res;                                                             \
-        __res = ((unsigned long)n) % (unsigned)base;                           \
-        n = ((unsigned long)n) / (unsigned)base;                               \
-        __res;                                                                 \
-    })
+static int do_div(unsigned long *n, unsigned base) {
+    int res = (int)(*n % (unsigned long)base);
+    *n = *n / (unsigned long)base;
+    return res;
+}
 
 static int skip_atoi(const char **s) {
     int i = 0;
-
-    while (isdigit(**s))
-        i = i * 10 + *((*s)++) - '0';
+    while (isdigit(**s)) i = i * 10 + *((*s)++) - '0';
     return i;
 }
 
-static char *number(char *str, long num, int base, int size, int precision,
+static char *number(char *str, unsigned long num, int base, int size, int precision,
                     int type) {
     static const char digits[16] = "0123456789ABCDEF";
 
@@ -63,7 +59,7 @@ static char *number(char *str, long num, int base, int size, int precision,
         tmp[i++] = '0';
     else
         while (num != 0)
-            tmp[i++] = (digits[__do_div(num, base)] | locase);
+            tmp[i++] = (digits[do_div(&num, base)] | locase);
     if (i > precision)
         precision = i;
     size -= precision;

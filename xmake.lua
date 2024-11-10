@@ -5,28 +5,24 @@ add_requires("zig")
 
 set_arch("i386")
 set_optimize("fastest")
-set_warnings("all", "extra")
+set_warnings("all", "extra", "pedantic", "error")
+
 set_policy("run.autobuild", true)
+set_policy("check.auto_ignore_flags", false)
 
 target("kernel")
     set_kind("binary")
     set_languages("c23")
     set_toolchains("@zig")
-    set_toolset("as", "zig cc")
     set_default(false)
 
     add_includedirs("include")
     add_files("src/**.s", "src/**.c")
 
-    add_asflags("-Wno-unused-command-line-argument", {force = true})
-
-    -- Fix xmake arch setting for Zig, see issue #5763
-    add_cflags("-target x86-freestanding", {force = true})
-    add_ldflags("-target x86-freestanding", {force = true})
-
-    add_ldflags("-T", "linker.ld", {force = true})
-    add_cflags("-flto", "-m32", {force = true})
-    add_cflags("-mno-80387", "-mno-mmx", "-mno-sse", "-mno-sse2", {force = true})
+    add_ldflags("-nostdlib", "-T", "linker.ld")
+    add_cflags("-m32", "-nostdlib", "-flto")
+    add_cflags("-mno-80387", "-mno-mmx", "-mno-sse", "-mno-sse2")
+    add_asflags("-Wno-unused-command-line-argument")
 
 target("iso")
     set_kind("phony")
