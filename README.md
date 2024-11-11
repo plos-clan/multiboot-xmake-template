@@ -46,4 +46,4 @@ menuentry "ExampleOS" {
 ```
 
 2. You'll need to comment out the "Limine Build ISO" section in `xmake.lua`
-3. and uncomment the "GRUB Build ISO" section in `xmake.lua`
+3. Replace the "Limine Build ISO" section in `xmake.lua` with `os.run("grub-mkrescue -o %s %s", iso_file, iso_dir)`

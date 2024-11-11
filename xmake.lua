@@ -19,9 +19,11 @@ target("kernel")
     add_includedirs("include")
     add_files("src/**.s", "src/**.c")
 
-    add_ldflags("-nostdlib", "-T", "linker.ld")
-    add_cflags("-m32", "-nostdlib", "-flto")
-    add_cflags("-mno-80387", "-mno-mmx", "-mno-sse", "-mno-sse2")
+    add_ldflags("-target x86-freestanding")
+    add_cflags("-target x86-freestanding")
+
+    add_ldflags("-T assets/linker.ld")
+    add_cflags("-m32", "-flto", "-mno-80387", "-mno-mmx", "-mno-sse", "-mno-sse2")
     add_asflags("-Wno-unused-command-line-argument")
 
 target("iso")
@@ -33,17 +35,12 @@ target("iso")
         import("core.project.project")
         local iso_dir = "$(buildir)/iso_dir"
 
-        if os.exists(iso_dir) then
-            os.rmdir(iso_dir)
-        end
+        local iso_dir = "$(buildir)/iso"
+        os.cp("assets/limine/*", iso_dir .. "/limine/")
 
-        os.cp("assets", iso_dir)
         local target = project.target("kernel")
         os.cp(target:targetfile(), iso_dir .. "/kernel.elf")
         local iso_file = "$(buildir)/exampleos.iso"
-
-        -- GRUB Build ISO (commented out)
-        -- os.run("grub-mkrescue -o %s %s", iso_file, iso_dir)
 
         -- Limine Build ISO
         local xorriso_flags = "-b limine/limine-bios-cd.bin -no-emul-boot -boot-info-table"
