@@ -28,16 +28,18 @@ stack_top:
 
 .section .text
 .global _start
-
 _start:
     # 为了设置堆栈，我们将esp寄存器指向堆栈的顶部
     movl $stack_top, %esp
+
+    # 传递 multiboot 信息到 C 代码
+    push %ebx
 
     .extern kernel_main # 内核主函数 main.c
     call kernel_main
 
     # 如果内核没有更多的事情要做，将电脑置于无限循环中
     cli
-L1:
+1:
     hlt
-    jmp L1
+    jmp 1b

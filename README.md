@@ -5,9 +5,8 @@ This repository contains a basic x86 kernel in C using Multiboot.
 ## About
 
 The template source code is borrowed from "CP_Kernel".
-Tested by x86 physical machine platform, there are no obvious bugs.
 
-[**ProjectStruct**](docs/ProjectStruct.md) has some project struct info.
+Tested by x86 physical machine platform, there are no obvious bugs.
 
 ## Dependencies
 

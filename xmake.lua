@@ -22,7 +22,7 @@ target("kernel")
     add_ldflags("-target x86-freestanding")
     add_cflags("-target x86-freestanding")
 
-    add_ldflags("-T assets/linker.ld")
+    add_ldflags("-T src/linker.ld")
     add_cflags("-m32", "-flto", "-mno-80387", "-mno-mmx", "-mno-sse", "-mno-sse2")
     add_asflags("-Wno-unused-command-line-argument")
 
@@ -35,8 +35,8 @@ target("iso")
         import("core.project.project")
         local iso_dir = "$(buildir)/iso_dir"
 
-        local iso_dir = "$(buildir)/iso"
-        os.cp("assets/limine/*", iso_dir .. "/limine/")
+        if os.exists(iso_dir) then os.rmdir(iso_dir) end
+        os.cp("assets", iso_dir)
 
         local target = project.target("kernel")
         os.cp(target:targetfile(), iso_dir .. "/kernel.elf")
