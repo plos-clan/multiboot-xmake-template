@@ -1,4 +1,3 @@
-
 #include "gdt.h"
 
 gdt_entry_t gdt_entries[GDT_LENGTH];
