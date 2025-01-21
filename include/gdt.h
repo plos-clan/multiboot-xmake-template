@@ -52,8 +52,8 @@ typedef struct tss_table {
     uint16_t iomap_base;
 } tss_entry;
 
-void set_kernel_stack(uintptr_t stack);
-void gdt_flush(uint32_t gdtr);
+void set_kernel_stack(uintptr_t stack); //设置内核栈地址 (进程切换时使用)
+void gdt_flush(uint32_t gdtr); 
 void tss_flush();
-void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
+void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran); //设置GDT段
 void gdt_install();
