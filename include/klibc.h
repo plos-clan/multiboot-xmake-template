@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "types/stdarg.h"
+#include "types/stdbool.h"
+#include "types/stddef.h"
+#include "types/stdint.h"
 
 #define isdigit(c) ((c) >= '0' && (c) <= '9')
 
